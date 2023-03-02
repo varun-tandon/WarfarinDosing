@@ -3,9 +3,27 @@ import metrics
 from constants import (
     DOSAGE_COLUMN, AGE_COLUMN, HEIGHT_COLUMN, WEIGHT_COLUMN, 
     RACE_COLUMN, ENZYME_INDUCER_COLUMNS, CLINICAL_DOSING_COLUMNS,
-    CLINICAL_DOSING_BASELINE_WEIGHTS)
+    CLINICAL_DOSING_BASELINE_WEIGHTS, Actions)
 
 import numpy as np
+
+class BaseAgent:
+    def act(self, observation):
+        raise NotImplementedError
+    
+    def update(self):
+        raise NotImplementedError
+    
+
+class FixedDoseAgent(BaseAgent):
+    def act(self, observation):
+        return Actions.MEDIUM
+    
+
+class LinearAgent(BaseAgent):
+    def act(self, observation):
+        return Actions.MEDIUM
+        
 
 def fixed_dose_baseline(data):
     return [35 for _ in range(len(data))]
