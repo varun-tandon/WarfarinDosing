@@ -8,6 +8,10 @@ from constants import (
     DOSAGE_COLUMN,
     AMIODARONE_COLUMN,
     VKORC1_COLUMN,
+    VKORC1_COLUMN_2255,
+    VKORC1_COLUMN_1173,
+    VKORC1_COLUMN_1542,
+    CYP2C9_COLUMN,
     Features,
     Actions
 )
@@ -24,7 +28,8 @@ def clean_data(df):
     df[WEIGHT_COLUMN] = impute_weight_data(df)
     df[RACE_COLUMN] = impute_race_data(df)
     df[ENZYME_INDUCER_COLUMNS] = df[ENZYME_INDUCER_COLUMNS].apply(impute_enzyme_column)
-    df[VKORC1_COLUMN] = impute_vkorc1_data(df)
+    df = impute_vkorc1_data(df)
+    df[CYP2C9_COLUMN] = df[CYP2C9_COLUMN].fillna('Unknown')
     return df
 
 def impute_age_data(data):
@@ -49,23 +54,59 @@ def impute_race_data(data):
 def impute_enzyme_column(column):
     return column.fillna(0)
 
+# note this logic must be applied in this ordering
 def impute_vkorc1_data(data):
-
-    return data[VKORC1_COLUMN].fillna('G')
+    for i, row in data.iterrows():
+        if (row[RACE_COLUMN] != "Black or African American") or (row[RACE_COLUMN] != "Missing or Mixed Race"):
+            if row[VKORC1_COLUMN_2255] == "C/C":
+                data.at[i, VKORC1_COLUMN] = "G/G"
+            elif row[VKORC1_COLUMN_2255] == "T/T":
+                data.at[i, VKORC1_COLUMN] = "A/A"
+            elif row[VKORC1_COLUMN_2255] == "C/T":
+                data.at[i, VKORC1_COLUMN] = "A/G"
+            elif pd.isna(row[VKORC1_COLUMN]):
+                data.at[i, VKORC1_COLUMN] = "Missing"
+        elif row[VKORC1_COLUMN_1173] == "C/C":
+            data.at[i, VKORC1_COLUMN] = "G/G"
+        elif row[VKORC1_COLUMN_1173] == "T/T":
+            data.at[i, VKORC1_COLUMN] = "A/A"
+        elif row[VKORC1_COLUMN_1173] == "C/T":
+            data.at[i, VKORC1_COLUMN] = "A/G"
+        elif (row[RACE_COLUMN] != "Black or African American") or (row[RACE_COLUMN] != "Missing or Mixed Race"):
+            if row[VKORC1_COLUMN_1542] == "G/G":
+                data.at[i, VKORC1_COLUMN] = "G/G"
+            elif row[VKORC1_COLUMN_1542] == "C/C":
+                data.at[i, VKORC1_COLUMN] = "A/A"
+            elif row[VKORC1_COLUMN_1542] == "C/G":
+                data.at[i, VKORC1_COLUMN] = "A/G"
+            elif pd.isna(row[VKORC1_COLUMN]):
+                data.at[i, VKORC1_COLUMN] = "Missing"
+        elif pd.isna(row[VKORC1_COLUMN]):
+                data.at[i, VKORC1_COLUMN] = "Missing"
+    return data
 
 def augment_data(df):
     # Start by transforming the data with the features needed for the algo per S1f
-    df[Features.AGE_IN_DECADES] = df[AGE_COLUMN].apply(lambda x: int(x[0]))
-    df[Features.HEIGHT] = df[HEIGHT_COLUMN]
-    df[Features.WEIGHT] = df[WEIGHT_COLUMN]
+    df[Features.AGE_IN_DECADES.value] = df[AGE_COLUMN].apply(lambda x: int(x[0]))
+    df[Features.HEIGHT.value] = df[HEIGHT_COLUMN]
+    df[Features.WEIGHT.value] = df[WEIGHT_COLUMN]
 
-    df[Features.ENZYME_INDUCER_STATUS] = (df[ENZYME_INDUCER_COLUMNS].sum(axis=1) > 0).astype(int)
-    df[Features.AMIODARONE_STATUS] = df[AMIODARONE_COLUMN].fillna(0)
-    df[Features.ASIAN_RACE] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Asian' else 0)
-    df[Features.BLACK_OR_AFRICAN_AMERICAN] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Black or African American' else 0)
-    df[Features.MISSING_OR_MIXED_RACE] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Unknown' else 0)
+    df[Features.ENZYME_INDUCER_STATUS.value] = (df[ENZYME_INDUCER_COLUMNS].sum(axis=1) > 0).astype(int)
+    df[Features.AMIODARONE_STATUS.value] = df[AMIODARONE_COLUMN].fillna(0)
+    df[Features.ASIAN_RACE.value] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Asian' else 0)
+    df[Features.BLACK_OR_AFRICAN_AMERICAN.value] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Black or African American' else 0)
+    df[Features.MISSING_OR_MIXED_RACE.value] = df[RACE_COLUMN].apply(lambda x: 1 if x == 'Unknown' else 0)
 
-    df[Features.VKORC1_G_A] = df['VKORC1 -1639 G>A'].apply(lambda x: 1 if x == 'G' else 0)
+    df[Features.VKORC1_A_G.value] = df[VKORC1_COLUMN].apply(lambda x: 1 if x == 'A/G' else 0)
+    df[Features.VKORC1_A_A.value] = df[VKORC1_COLUMN].apply(lambda x: 1 if x == 'A/A' else 0)
+    df[Features.VKORC1_UNKOWN.value] = df[VKORC1_COLUMN].apply(lambda x: 1 if x == 'Missing' else 0)
+
+    df[Features.CYP2C9_1_2.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == '*1/*2' else 0)
+    df[Features.CYP2C9_1_3.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == '*1/*3' else 0)
+    df[Features.CYP2C9_2_2.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == '*2/*2' else 0)
+    df[Features.CYP2C9_2_3.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == '*2/*3' else 0)
+    df[Features.CYP2C9_3_3.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == '*3/*3' else 0)
+    df[Features.CYP2C9_UKNOWN.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == 'Unknown' else 0)
 
     # finally create the dosage column as a categorical
     df["dosage"] = df[DOSAGE_COLUMN].apply(lambda x: Actions.LOW if x < 21 else Actions.MEDIUM if x < 49 else Actions.HIGH)
@@ -80,5 +121,7 @@ if __name__ == "__main__":
     # augment data with features needed for the algorithms
     df = augment_data(df)
     # save only the needed columns
-    df = df[[f.value for f in Features]]
+    selected_columns = [f.value for f in Features]
+    selected_columns.append('dosage')
+    df = df[selected_columns]
     df.to_csv('data/warfarin_clean.csv', index=False)

@@ -15,7 +15,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # first get all of the data
-    df = pd.read_csv('data/warfarin_cleaned.csv')
+    df = pd.read_csv('data/warfarin_clean.csv')
+    print(df.head())
 
     # now select the agent
     agent = None
@@ -31,8 +32,9 @@ if __name__ == "__main__":
     # we need to run our big boi 20 times! 
     for seed in range(1, 2):
         # set our seeds
-        np.random.seed(args.seed)
-        random.seed(args.seed)
+        np.random.seed(seed)
+        random.seed(seed)
         config = Config(args.agent, seed)
 
         # reorder the data
+        cur_df = df.sample(frac=1, random_state=seed)

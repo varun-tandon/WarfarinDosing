@@ -18,7 +18,7 @@ class Features(Enum):
     ENZYME_INDUCER_STATUS = "enzyme_inducer_status"
     AMIODARONE_STATUS = "amiodarone_status"
 
-    VKORC1_G_A = "vk0rc1_g_a"
+    VKORC1_A_G = "vk0rc1_a_g"
     VKORC1_A_A = "vk0rc1_a_a"
     VKORC1_UNKOWN = "vk0rc1_unknown"
     CYP2C9_1_2 = "cyp2c9_1_2"
@@ -57,6 +57,10 @@ HEIGHT_COLUMN = 'Height (cm)'
 WEIGHT_COLUMN = 'Weight (kg)'
 AMIODARONE_COLUMN = 'Amiodarone (Cordarone)'
 VKORC1_COLUMN = 'VKORC1 genotype: -1639 G>A (3673); chr16:31015190; rs9923231; C/T'
+VKORC1_COLUMN_2255 = 'VKORC1 genotype: 2255C>T (7566); chr16:31011297; rs2359612; A/G'
+VKORC1_COLUMN_1173 = 'VKORC1 genotype: 1173 C>T(6484); chr16:31012379; rs9934438; A/G'
+VKORC1_COLUMN_1542 = 'VKORC1 genotype: 1542G>C (6853); chr16:31012010; rs8050894; C/G'
+CYP2C9_COLUMN = 'Cyp2C9 genotypes'
 
 # Weights used by the Clinical Dosing baseline
 CLINICAL_DOSING_BASELINE_WEIGHTS = [
