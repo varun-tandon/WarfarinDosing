@@ -111,7 +111,7 @@ def augment_data(df):
     df[Features.CYP2C9_UKNOWN.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == 'Unknown' else 0)
 
     # finally create the dosage column as a categorical
-    df[DOSAGE_BUCKET_COLUMN] = df[DOSAGE_COLUMN].apply(convert_dosage_to_action)
+    df[DOSAGE_BUCKET_COLUMN] = df[DOSAGE_COLUMN]
     return df
 
 

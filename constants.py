@@ -42,8 +42,8 @@ CLINICAL_DOSING_COLUMNS = [
     Features.AMIODARONE_STATUS.value,
 ]
 
-# These are the features used by the SLB agent
-SLB_COLUMNS = [f.value for f in Features]
+# These are the features used by the Linear Bandit agent
+LINEAR_BANDIT_COLUMNS = [f.value for f in Features]
 
 # Columns needed in order to do imputing or transformations
 DOSAGE_COLUMN = 'Therapeutic Dose of Warfarin'

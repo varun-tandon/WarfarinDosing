@@ -3,14 +3,14 @@ import numpy as np
 from config import Config
 import random
 import pandas as pd
-from baselines import FixedDoseAgent, LinearAgent, StochasticLinearBanditAgent
+from baselines import FixedDoseAgent, LinearAgent, LinearBanditAgent
 from utils import get_reward
 import os
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--agent", required=True, type=str, choices=["fixed", "linear", "slb"]
+    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit"]
 )
 
 
@@ -26,8 +26,8 @@ if __name__ == "__main__":
         agent = FixedDoseAgent()
     elif args.agent == 'linear':
         agent = LinearAgent()
-    elif args.agent == 'slb':
-        agent = StochasticLinearBanditAgent()
+    elif args.agent == 'linearbandit':
+        agent = LinearBanditAgent()
     else:
         raise ValueError("Agent type not recognized")
 
@@ -47,8 +47,9 @@ if __name__ == "__main__":
         i = 1
 
         for _, observation in cur_df.iterrows():
+            # action is the dosage bucket
             action = agent.act(observation)
-            agent.update()
+            agent.update(observation)
 
             reward = get_reward(observation, action)
             # record the performance and the loss
@@ -70,4 +71,3 @@ if __name__ == "__main__":
 
         np.save(config.accuracy_output, accuracy)
         np.save(config.regret_output, regret)
-        
