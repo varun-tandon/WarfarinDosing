@@ -127,3 +127,4 @@ if __name__ == "__main__":
     selected_columns.append('dosage')
     df = df[selected_columns]
     df.to_csv('data/warfarin_clean.csv', index=False)
+    

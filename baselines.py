@@ -34,3 +34,4 @@ class StochasticLinearBanditAgent(BaseAgent):
 
     def update(self):
         pass
+    

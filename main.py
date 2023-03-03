@@ -70,3 +70,4 @@ if __name__ == "__main__":
 
         np.save(config.accuracy_output, accuracy)
         np.save(config.regret_output, regret)
+        
