@@ -12,9 +12,11 @@ from constants import (
     VKORC1_COLUMN_1173,
     VKORC1_COLUMN_1542,
     CYP2C9_COLUMN,
+    DOSAGE_BUCKET_COLUMN,
     Features,
     Actions
 )
+from utils import convert_dosage_to_action
 pd.options.mode.chained_assignment = None  # default='warn'
 
 
@@ -109,7 +111,7 @@ def augment_data(df):
     df[Features.CYP2C9_UKNOWN.value] = df[CYP2C9_COLUMN].apply(lambda x: 1 if x == 'Unknown' else 0)
 
     # finally create the dosage column as a categorical
-    df["dosage"] = df[DOSAGE_COLUMN].apply(lambda x: Actions.LOW if x < 21 else Actions.MEDIUM if x < 49 else Actions.HIGH)
+    df[DOSAGE_BUCKET_COLUMN] = df[DOSAGE_COLUMN].apply(convert_dosage_to_action)
     return df
 
 

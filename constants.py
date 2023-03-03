@@ -28,17 +28,18 @@ class Features(Enum):
     CYP2C9_3_3 = "cyp2c9_3_3"
     CYP2C9_UKNOWN = "cyp2c9_unknown"
 
+DOSAGE_BUCKET_COLUMN = "dosage"
 
 # These are the features used by the computation of the clinical dosing agent
 CLINICAL_DOSING_COLUMNS = [
-    Features.AGE_IN_DECADES,
-    Features.HEIGHT,
-    Features.WEIGHT,
-    Features.ASIAN_RACE,
-    Features.BLACK_OR_AFRICAN_AMERICAN,
-    Features.MISSING_OR_MIXED_RACE,
-    Features.ENZYME_INDUCER_STATUS,
-    Features.AMIODARONE_STATUS,
+    Features.AGE_IN_DECADES.value,
+    Features.HEIGHT.value,
+    Features.WEIGHT.value,
+    Features.ASIAN_RACE.value,
+    Features.BLACK_OR_AFRICAN_AMERICAN.value,
+    Features.MISSING_OR_MIXED_RACE.value,
+    Features.ENZYME_INDUCER_STATUS.value,
+    Features.AMIODARONE_STATUS.value,
 ]
 
 # These are the features used by the SLB agent
