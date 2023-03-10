@@ -11,7 +11,7 @@ class BaseAgent:
     def act(self, observation):
         raise NotImplementedError
     
-    def update(self, observation):
+    def update(self, observation, *_):
         pass
     
 

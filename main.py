@@ -5,13 +5,14 @@ import random
 import pandas as pd
 from baselines import FixedDoseAgent, LinearAgent
 from supervised import SupervisedLearningAgent
+from UCB import UCBAgent, LinUCBAgent
 from utils import get_reward
 import os
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit", "supervised"]
+    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit", "supervised", "ucb", "linucb"]
 )
 
 
@@ -30,12 +31,16 @@ if __name__ == "__main__":
     elif args.agent == 'linearbandit':
         exit("Linear Bandits not implemented yet")
     elif args.agent == 'supervised':
-        agent = SupervisedLearningAgent()
+        agent = SupervisedLearningAgent(model_type="ridge")
+    elif args.agent == 'ucb':
+        agent = UCBAgent()
+    elif args.agent == 'linucb':
+        agent = LinUCBAgent()
     else:
         raise ValueError("Agent type not recognized")
 
     # we need to run our big boi 20 times! 
-    for seed in range(0, 1):
+    for seed in range(0, 20):
         # set our seeds
         np.random.seed(seed)
         random.seed(seed)
@@ -52,9 +57,9 @@ if __name__ == "__main__":
         for _, observation in cur_df.iterrows():
             # action is the dosage bucket
             action = agent.act(observation)
-            agent.update(observation)
-
             reward = get_reward(observation, action)
+            agent.update(observation, action, reward)
+
             # record the performance and the loss
             if reward == -1:
                 num_wrong += 1
