@@ -3,14 +3,15 @@ import numpy as np
 from config import Config
 import random
 import pandas as pd
-from baselines import FixedDoseAgent, LinearAgent, LinearBanditAgent
+from baselines import FixedDoseAgent, LinearAgent
+from supervised import SupervisedLearningAgent
 from utils import get_reward
 import os
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit"]
+    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit", "supervised"]
 )
 
 
@@ -27,7 +28,9 @@ if __name__ == "__main__":
     elif args.agent == 'linear':
         agent = LinearAgent()
     elif args.agent == 'linearbandit':
-        agent = LinearBanditAgent()
+        exit("Linear Bandits not implemented yet")
+    elif args.agent == 'supervised':
+        agent = SupervisedLearningAgent()
     else:
         raise ValueError("Agent type not recognized")
 
