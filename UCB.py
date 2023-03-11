@@ -47,3 +47,27 @@ class LinUCB(BaseAgent):
         self.A[action] += np.outer(x, x)
         self.b[action] += reward * x
         self.theta[action] = np.linalg.inv(self.A[action]) @ self.b[action]
+
+class EnsembleSamplingAgent(BaseAgent):
+    def __init__(self, num_models=10):
+        self.num_models = num_models
+        self.models = [LinUCBAgent() for _ in range(self.num_models)]
+    
+    def act(self, observation):
+        model = np.random.choice(self.models)
+        return model.act(observation)
+        # if self.t < self.num_actions:
+        #     return self.t
+        # else:
+        #     x = observation[LINEAR_BANDIT_COLUMNS].to_numpy()
+        #     p = np.zeros(self.num_actions)
+        #     model = np.random.choice(self.models)
+        #     for a in range(self.num_actions):
+        #         model.theta[a] = np.linalg.solve(model.A[a], model.b[a])
+        #         p[a] = model.theta[a] @ x
+        #     return np.argmax(p)
+    
+    def update(self, observation, action, reward):
+        for model in self.models:
+            model.update(observation, action, reward)
+
