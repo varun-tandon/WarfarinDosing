@@ -8,11 +8,12 @@ from supervised import SupervisedLearningAgent
 from UCB import UCBAgent, LinUCBAgent
 from utils import get_reward
 import os
+from tqdm import tqdm
 
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
-    "--agent", required=True, type=str, choices=["fixed", "linear", "linearbandit", "supervised", "ucb", "linucb"]
+    "--agent", required=True, type=str, choices=["fixed", "linear", "ucb", "linucb", "supervised-lin", "supervised-ridge"]
 )
 
 
@@ -28,19 +29,19 @@ if __name__ == "__main__":
         agent = FixedDoseAgent()
     elif args.agent == 'linear':
         agent = LinearAgent()
-    elif args.agent == 'linearbandit':
-        exit("Linear Bandits not implemented yet")
-    elif args.agent == 'supervised':
-        agent = SupervisedLearningAgent(model_type="ridge")
     elif args.agent == 'ucb':
         agent = UCBAgent()
     elif args.agent == 'linucb':
         agent = LinUCBAgent()
+    elif args.agent == 'supervised-lin':
+        agent = SupervisedLearningAgent()
+    elif args.agent == 'supervised-ridge':
+        agent = SupervisedLearningAgent(model_type='ridge')
     else:
         raise ValueError("Agent type not recognized")
 
     # we need to run our big boi 20 times! 
-    for seed in range(0, 20):
+    for seed in tqdm(range(0, 20)):
         # set our seeds
         np.random.seed(seed)
         random.seed(seed)
