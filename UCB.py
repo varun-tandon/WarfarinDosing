@@ -20,7 +20,7 @@ class UCBAgent(BaseAgent):
         self.N[action] += 1
         self.Q[action] = self.Q[action] * ((self.N[action] - 1) / self.N[action]) + reward / self.N[action]
 
-class LinUCBAgent(BaseAgent):
+class LinUCB(BaseAgent):
     def __init__(self):
         self.alpha = 0.1
         self.num_actions = 3
