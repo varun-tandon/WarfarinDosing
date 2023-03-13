@@ -71,9 +71,9 @@ if __name__ == "__main__":
                 num_wrong += 1
 
             if i - 1 == 0:
-                regret[i - 1] = reward
+                regret[i - 1] = -reward
             else:
-                regret[i - 1] = regret[i - 2] + reward
+                regret[i - 1] = regret[i - 2] - reward
             accuracy[i - 1] = num_wrong / i
             i += 1
         
