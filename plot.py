@@ -85,9 +85,6 @@ if __name__ == "__main__":
                 np.load("results/" + format_str.format(agent) + "/regret.npy")
             )
 
-    # print(all_results_accuracy)
-    # print(all_results_regret)
-
     accuracy_title = '_'.join(agents) + '_accuracy.png'
     regret_title = '_'.join(agents) + '_regret.png'
 
