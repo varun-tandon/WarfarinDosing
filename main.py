@@ -17,17 +17,20 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--agent", required=True, type=str, choices=[
         "fixed", "linear", "ucb", "linucb",
-        "supervised-lin", "supervised-ridge", "thompson",
-        "ensemble"
+        "supervised-lin", "supervised-ridge", "supervised-ridge-0.01", "supervised-ridge-0.05", 
+        "supervised-ridge-0.1", "supervised-ridge-0.5", "supervised-ridge-1", "supervised-ridge-5", 
+        "thompson", "ensemble"
     ]
 )
-
 
 if __name__ == "__main__":
     args = parser.parse_args()
 
     # first get all of the data
     df = pd.read_csv('data/warfarin_clean.csv')
+
+    accuracies = []
+    regrets = []
 
     # we need to run our big boi 20 times! 
     for seed in range(0, 20):
@@ -45,6 +48,18 @@ if __name__ == "__main__":
             agent = SupervisedLearningAgent()
         elif args.agent == 'supervised-ridge':
             agent = SupervisedLearningAgent(model_type='ridge')
+        elif args.agent == 'supervised-ridge-0.01':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=0.01)
+        elif args.agent == 'supervised-ridge-0.05':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=0.05)
+        elif args.agent == 'supervised-ridge-0.1':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=0.1)
+        elif args.agent == 'supervised-ridge-0.5':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=0.5)
+        elif args.agent == 'supervised-ridge-1':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=1)
+        elif args.agent == 'supervised-ridge-5':
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=5)
         elif args.agent == 'thompson':
             agent = ThompsonSamplingAgent()
         elif args.agent == 'ensemble':
@@ -81,11 +96,16 @@ if __name__ == "__main__":
             accuracy[i - 1] = num_wrong / i
             i += 1
         
+        accuracies.append(1-accuracy[-1])
+        regrets.append(regret[-1])
         print("Accuracy: {}".format(1 - accuracy[-1]))
         print("Regret: {}".format(regret[-1]))
+        
         # directory for training outputs
         if not os.path.exists(config.output_path):
             os.makedirs(config.output_path)
 
         np.save(config.accuracy_output, accuracy)
         np.save(config.regret_output, regret)
+    print(f"Average FIDD: {1 - sum(accuracies)/len(accuracies)}")
+    print(f"Average regret: {sum(regrets)/len(regrets)}")
