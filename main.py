@@ -28,27 +28,29 @@ if __name__ == "__main__":
 
     # first get all of the data
     df = pd.read_csv('data/warfarin_clean.csv')
-    # now select the agent
-    agent = None
-    if args.agent == 'fixed':
-        agent = FixedDoseAgent()
-    elif args.agent == 'linear':
-        agent = LinearAgent()
-    elif args.agent == 'ucb':
-        agent = UCBAgent()
-    elif args.agent == 'linucb':
-        agent = LinUCBAgent()
-    elif args.agent == 'supervised-lin':
-        agent = SupervisedLearningAgent()
-    elif args.agent == 'supervised-ridge':
-        agent = SupervisedLearningAgent(model_type='ridge')
-    elif args.agent == 'ensemble':
-        agent = EnsembleSamplingAgent(num_models=5)
-    else:
-        raise ValueError("Agent type not recognized")
 
     # we need to run our big boi 20 times! 
     for seed in range(0, 20):
+        # now select the agent
+        agent = None
+        if args.agent == 'fixed':
+            agent = FixedDoseAgent()
+        elif args.agent == 'linear':
+            agent = LinearAgent()
+        elif args.agent == 'ucb':
+            agent = UCBAgent()
+        elif args.agent == 'linucb':
+            agent = LinUCBAgent()
+        elif args.agent == 'supervised-lin':
+            agent = SupervisedLearningAgent()
+        elif args.agent == 'supervised-ridge':
+            agent = SupervisedLearningAgent(model_type='ridge')
+        elif args.agent == 'thompson':
+            agent = ThompsonSamplingAgent()
+        elif args.agent == 'ensemble':
+            agent = EnsembleSamplingAgent(num_models=5)
+        else:
+            raise ValueError("Agent type not recognized")
         # set our seeds
         np.random.seed(seed)
         random.seed(seed)
