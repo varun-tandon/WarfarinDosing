@@ -6,7 +6,8 @@ import pandas as pd
 from baselines import FixedDoseAgent, LinearAgent
 from supervised import SupervisedLearningAgent
 from thompson import ThompsonSamplingAgent
-from UCB import UCBAgent, LinUCBAgent, EnsembleSamplingAgent
+from UCB import UCBAgent, LinUCBAgent
+from ensemble import EnsembleSamplingAgent
 from utils import get_reward
 import os
 from tqdm import tqdm
@@ -42,12 +43,12 @@ if __name__ == "__main__":
     elif args.agent == 'supervised-ridge':
         agent = SupervisedLearningAgent(model_type='ridge')
     elif args.agent == 'ensemble':
-        agent = EnsembleSamplingAgent()
+        agent = EnsembleSamplingAgent(num_models=5)
     else:
         raise ValueError("Agent type not recognized")
 
     # we need to run our big boi 20 times! 
-    for seed in range(0, 1):
+    for seed in range(0, 20):
         # set our seeds
         np.random.seed(seed)
         random.seed(seed)

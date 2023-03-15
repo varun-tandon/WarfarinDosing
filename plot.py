@@ -17,34 +17,80 @@ def plot_combined(name, results):
     yerrs = stats.sem(results, axis=0) * stats.t.ppf((1 + 0.95) / 2, results.shape[0] - 1)
 
     plt.fill_between(xs, ys - yerrs, ys + yerrs, alpha=0.25)
-    plt.ylim(0.3, 0.6)
     plt.plot(xs, ys, label=name)
 
 
-if __name__ == "__main__":
-    # all_results = {"Fixed baseline": [], "Linear baseline": [], 
-    #                "UCB": [], "linUCB": [], "Supervised Linear Regression": [], 
-    #                "Supervised Ridge Regression": [], "Thompson Sampling": []}
-    
-    all_results = {"Fixed baseline": [], "Linear baseline": [], 
-                   "UCB": []}
-    
-    for seed in range(0, 20):
-        format_str = f"{{}}-seed={seed}"
-        all_results["Fixed baseline"].append(
-            np.load("results/" + format_str.format("fixed") + "/accuracy.npy")
-        )
-        all_results["Linear baseline"].append(
-            np.load("results/" + format_str.format("linear") + "/accuracy.npy")
-        )
-        all_results["UCB"].append(
-            np.load("results/" + format_str.format("ucb") + "/accuracy.npy")
-        )
-
+def plot_accuracy(all_results, title, filename):
     plt.figure()
-    plt.title("Accuracy")
+    plt.title(title)
     plt.xlabel("Iteration")
     for name, results in all_results.items():
         plot_combined(name, results)
+
+    plt.ylim(0.3, 0.6)
     plt.legend()
-    plt.savefig("results-accuracy", bbox_inches="tight")
+    plt.savefig(filename, bbox_inches="tight")
+    plt.close()
+
+def plot_regret(all_results, title, filename):
+    plt.figure()
+    plt.title(title)
+    plt.xlabel("Iteration")
+    for name, results in all_results.items():
+        plot_combined(name, results)
+    
+    plt.legend()
+    plt.savefig(filename, bbox_inches="tight")
+    plt.close()
+    
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser()
+    parser.add_argument(
+        "--agents", required=True, help="Comma-separated list of agents to plot"
+    )
+    args = parser.parse_args()
+    agents = args.agents.split(",")
+
+    agent_mapping = {
+        "fixed": "Fixed baseline",
+        "linear": "Linear baseline",
+        "ucb": "UCB",
+        "linucb": "LinUCB",
+        "supervised-lin": "Supervised Linear Regression",
+        "supervised-ridge": "Supervised Ridge Regression",
+        "thompson": "Thompson",
+        "ensemble": "Ensemble",
+    }
+
+    all_results_accuracy = {}
+    all_results_regret = {}
+    
+    for seed in range(0, 20):
+        format_str = f"{{}}-seed={seed}"
+        for agent in agents:
+            if agent not in agent_mapping:
+                raise ValueError(f"Agent {agent} not recognized")
+            name = agent_mapping[agent]
+
+            if name not in all_results_accuracy:
+                all_results_accuracy[name] = []
+                all_results_regret[name] = []
+
+            all_results_accuracy[name].append(
+                np.load("results/" + format_str.format(agent) + "/accuracy.npy")
+            )
+            all_results_regret[name].append(
+                np.load("results/" + format_str.format(agent) + "/regret.npy")
+            )
+
+    # print(all_results_accuracy)
+    # print(all_results_regret)
+
+    accuracy_title = '_'.join(agents) + '_accuracy.png'
+    regret_title = '_'.join(agents) + '_regret.png'
+
+    plot_accuracy(all_results_accuracy, "Fraction of Incorrect Dosing Decisions", f"plots/{accuracy_title}")
+    plot_regret(all_results_regret, "Cumulative Regret", f"plots/{regret_title}")
+    
