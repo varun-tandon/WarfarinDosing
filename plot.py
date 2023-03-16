@@ -60,7 +60,7 @@ if __name__ == "__main__":
         "linucb": "LinUCB",
         "supervised-lin": "Supervised Linear Regression",
         # this one represnts the optimal ridge regression
-        "supervised-ridge": "Supervised Ridge Regression",
+        "supervised-ridge": "Supervised Ridge Regression (alpha=0.5)",
         "supervised-ridge-0.01": "alpha=0.01",
         "supervised-ridge-0.05": "alpha=0.05",
         "supervised-ridge-0.1": "alpha=0.1",

@@ -46,8 +46,9 @@ if __name__ == "__main__":
             agent = LinUCBAgent()
         elif args.agent == 'supervised-lin':
             agent = SupervisedLearningAgent()
+        # this one represnts the optimal ridge regression
         elif args.agent == 'supervised-ridge':
-            agent = SupervisedLearningAgent(model_type='ridge')
+            agent = SupervisedLearningAgent(model_type='ridge', alpha=0.5)
         elif args.agent == 'supervised-ridge-0.01':
             agent = SupervisedLearningAgent(model_type='ridge', alpha=0.01)
         elif args.agent == 'supervised-ridge-0.05':
