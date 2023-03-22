@@ -11,7 +11,7 @@ from ensemble import EnsembleSamplingAgent
 from utils import get_reward
 import os
 from tqdm import tqdm
-
+from constants import DOSAGE_COLUMN, DOSAGE_BUCKET_COLUMN
 
 parser = argparse.ArgumentParser()
 parser.add_argument(
@@ -19,7 +19,10 @@ parser.add_argument(
         "fixed", "linear", "ucb", "linucb",
         "supervised-lin", "supervised-ridge", "supervised-ridge-0.01", "supervised-ridge-0.05", 
         "supervised-ridge-0.1", "supervised-ridge-0.5", "supervised-ridge-1", "supervised-ridge-5", 
-        "thompson", "ensemble"
+        "thompson-0", "thompson-0.01", "thompson-0.1", "thompson-0.3", "thompson-0.5", "thompson-0.7", "thompson-1", "thompson-2", "thompson-5",
+        "thompson-10", "thompson-20", "thompson-100",
+        "ensemble-0", "ensemble-0.01", "ensemble-0.1", "ensemble-0.5", "ensemble-1", "ensemble-2", "ensemble-5", 
+        "ensemble-10", "ensemble-20", "ensemble-100",
     ]
 )
 
@@ -28,6 +31,7 @@ if __name__ == "__main__":
 
     # first get all of the data
     df = pd.read_csv('data/warfarin_clean.csv')
+    print(len(df.columns))
 
     accuracies = []
     regrets = []
@@ -61,10 +65,50 @@ if __name__ == "__main__":
             agent = SupervisedLearningAgent(model_type='ridge', alpha=1)
         elif args.agent == 'supervised-ridge-5':
             agent = SupervisedLearningAgent(model_type='ridge', alpha=5)
-        elif args.agent == 'thompson':
-            agent = ThompsonSamplingAgent()
-        elif args.agent == 'ensemble':
-            agent = EnsembleSamplingAgent(num_models=5)
+        elif args.agent == 'thompson-0':
+            agent = ThompsonSamplingAgent(v=0)
+        elif args.agent == 'thompson-0.01':
+            agent = ThompsonSamplingAgent(v=0.01)
+        elif args.agent == 'thompson-0.1':
+            agent = ThompsonSamplingAgent(v=0.1)
+        elif args.agent == 'thompson-0.3':
+            agent = ThompsonSamplingAgent(v=0.3)
+        elif args.agent == 'thompson-0.5':
+            agent = ThompsonSamplingAgent(v=0.5)
+        elif args.agent == 'thompson-0.7':
+            agent = ThompsonSamplingAgent(v=0.7)
+        elif args.agent == 'thompson-1':
+            agent = ThompsonSamplingAgent(v=1)
+        elif args.agent == 'thompson-2':
+            agent = ThompsonSamplingAgent(v=2)
+        elif args.agent == 'thompson-5':
+            agent = ThompsonSamplingAgent(v=5)
+        elif args.agent == 'thompson-10':
+            agent = ThompsonSamplingAgent(v=10)
+        elif args.agent == 'thompson-20':
+            agent = ThompsonSamplingAgent(v=20)
+        elif args.agent == 'thompson-100':
+            agent = ThompsonSamplingAgent(v=100)
+        elif args.agent == 'ensemble-0':
+            agent = EnsembleSamplingAgent(sigma_w=0)
+        elif args.agent == 'ensemble-0.01':
+            agent = EnsembleSamplingAgent(sigma_w=0.01)
+        elif args.agent == 'ensemble-0.1':
+            agent = EnsembleSamplingAgent(sigma_w=0.1)
+        elif args.agent == 'ensemble-0.5':
+            agent = EnsembleSamplingAgent(sigma_w=0.5)
+        elif args.agent == 'ensemble-1':
+            agent = EnsembleSamplingAgent(sigma_w=1)
+        elif args.agent == 'ensemble-2':
+            agent = EnsembleSamplingAgent(sigma_w=2)
+        elif args.agent == 'ensemble-5':
+            agent = EnsembleSamplingAgent(sigma_w=5)
+        elif args.agent == 'ensemble-10':
+            agent = EnsembleSamplingAgent(sigma_w=10)
+        elif args.agent == 'ensemble-20':
+            agent = EnsembleSamplingAgent(sigma_w=20)
+        elif args.agent == 'ensemble-100':
+            agent = EnsembleSamplingAgent(sigma_w=100)
         else:
             raise ValueError("Agent type not recognized")
         # set our seeds
@@ -74,13 +118,12 @@ if __name__ == "__main__":
 
         # reorder the data
         cur_df = df.sample(frac=1, random_state=seed)
-
         num_wrong = 0
         accuracy = np.zeros(len(cur_df))
         regret = np.zeros(len(cur_df))
         i = 1
 
-        for _, observation in tqdm(cur_df.iterrows()):
+        for _, observation in tqdm(cur_df.iterrows(), total=len(cur_df)):
             # action is the dosage bucket
             action = agent.act(observation)
             reward = get_reward(observation, action)

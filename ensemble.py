@@ -6,13 +6,13 @@ from utils import convert_dosage_to_action
 
 
 class EnsembleSamplingAgent(BaseAgent):
-    def __init__(self, num_models=10):
+    def __init__(self, num_models=10, sigma_w=1):
         self.num_models = num_models
         self.feature_dim = len(LINEAR_BANDIT_COLUMNS)
         self.seen_observations = [np.zeros((0, self.feature_dim)) for _ in range(self.num_models)]
         self.seen_labels = [np.zeros(0) for _ in range(self.num_models)]
         # hyperparameter to tune
-        self.sigma_w = 1
+        self.sigma_w = sigma_w
         self.t = 0
 
     def act(self, observation):

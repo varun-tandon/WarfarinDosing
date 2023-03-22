@@ -27,7 +27,7 @@ def plot_accuracy(all_results, title, filename):
     for name, results in all_results.items():
         plot_combined(name, results)
 
-    plt.ylim(0.3, 0.6)
+    plt.ylim(0.2, 0.8)
     plt.legend()
     plt.savefig(filename, bbox_inches="tight")
     plt.close()
@@ -67,8 +67,28 @@ if __name__ == "__main__":
         "supervised-ridge-0.5": "alpha=0.5",
         "supervised-ridge-1": "alpha=1",
         "supervised-ridge-5": "alpha=5",
-        "thompson": "Thompson",
-        "ensemble": "Ensemble",
+        "thompson-0": "variance=0",
+        "thompson-0.01": "variance=0.01",
+        "thompson-0.1": "variance=0.1",
+        "thompson-0.3": "variance=0.3",
+        "thompson-0.5": "variance=0.5",
+        "thompson-0.7": "variance=0.7",
+        "thompson-1": "variance=1",
+        "thompson-2": "variance=2",
+        "thompson-5": "variance=5",
+        "thompson-10": "Thompson (variance=10)",
+        "thompson-20": "variance=20",
+        "thompson-100": "variance=100",
+        "ensemble-0": "noise_std = 0",
+        "ensemble-0.01": "noise_std = 0.01",
+        "ensemble-0.1": "Ensemble (noise_std = 0.1)",
+        "ensemble-0.5": "noise_std = 0.5",
+        "ensemble-1": "Ensemble (noise_std = 1)",
+        "ensemble-2": "noise_std = 2",
+        "ensemble-5": "noise_std = 5",
+        "ensemble-10": "noise_std = 10",
+        "ensemble-20": "noise_std = 20",
+        "ensemble-100": "noise_std = 100",
     }
 
     all_results_accuracy = {}
